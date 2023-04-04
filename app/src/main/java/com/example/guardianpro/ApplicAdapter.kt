@@ -43,6 +43,9 @@ class ApplicAdapter(val listener: Listener) : RecyclerView.Adapter<ApplicAdapter
             if(applic.access == true){
                 cardViewItem.strokeColor = Color.parseColor("#66D371")
             }
+            else{
+                cardViewItem.strokeColor = Color.parseColor("#C4C4C4")
+            }
 
             btNext.setOnClickListener {
                 listener.onClick(applic, binding)
