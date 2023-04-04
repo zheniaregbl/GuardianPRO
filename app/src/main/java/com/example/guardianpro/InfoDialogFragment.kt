@@ -18,10 +18,11 @@ import kotlinx.android.synthetic.main.custom_toast.view.*
 import kotlinx.android.synthetic.main.info_access_fragment.view.*
 import kotlinx.coroutines.runBlocking
 
-class InfoDialogFragment(applic: Applic, binding: ApplicItemBinding, context: Context) : DialogFragment() {
+class InfoDialogFragment(applic: Applic, binding: ApplicItemBinding, context: Context, bool: Boolean) : DialogFragment() {
     private val form = applic
     private val item = binding
     private val activity = context
+    private val finish = bool
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +43,15 @@ class InfoDialogFragment(applic: Applic, binding: ApplicItemBinding, context: Co
         rootView.tvInfo4.text = "Отчество: ${form.secondName}"
         rootView.tvInfo5.text = "Подр-ние: ${form.division}"
         rootView.tvInfo6.text = "Дата: ${form.date}"
-        rootView.tvInfo7.text = "Время: ${form.timeIn}"
+        rootView.tvInfo7.text = "Время визита: ${form.timeIn}"
+
+        if (finish){
+            rootView.tvInfo8.text = "Время ухода: ${form.timeOut}"
+            rootView.btAccess.visibility = View.GONE
+        }
+        else{
+            rootView.tvInfo8.visibility = View.GONE
+        }
 
         rootView.btClose.setOnClickListener {
             dismiss()

@@ -5,14 +5,17 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.example.guardianpro.databinding.ApplicItemBinding
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class ApplicAdapter(val listener: Listener) : RecyclerView.Adapter<ApplicAdapter.ApplicHolder>() {
+class ApplicAdapter(val listener: Listener) : RecyclerView.Adapter<ApplicAdapter.ApplicHolder>(), Filterable {
     var applicList = ArrayList<Applic>()
+    var secondApplicList = ArrayList<Applic>()
 
     class ApplicHolder(item: View) : RecyclerView.ViewHolder(item) {
         val binding = ApplicItemBinding.bind(item)
@@ -72,9 +75,43 @@ class ApplicAdapter(val listener: Listener) : RecyclerView.Adapter<ApplicAdapter
         return applicList.size
     }
 
+    override fun getFilter(): Filter {
+        return object : Filter(){
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val charSearch = constraint.toString()
+
+                applicList = if (charSearch.isNotEmpty()){
+                    val resultList = ArrayList<Applic>()
+
+                    for (row in applicList){
+                        if (row.lastName.toString().lowercase(Locale.ROOT)
+                                .contains(charSearch.lowercase(Locale.ROOT))
+                        ) {
+                            resultList.add(row)
+                        }
+                    }
+                    resultList
+                } else {
+                    secondApplicList
+                }
+
+                val filterResults = FilterResults()
+                filterResults.values = applicList
+                return filterResults
+            }
+
+            @SuppressLint("NotifyDataSetChanged")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                applicList = results?.values as ArrayList<Applic>
+                notifyDataSetChanged()
+            }
+        }
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     fun addApplic(applic: Applic){
         applicList.add(applic)
+        secondApplicList = applicList
         notifyDataSetChanged()
     }
 

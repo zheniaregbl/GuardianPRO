@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
                 else{
                     Toast(this).apply {
                         val layout = layoutInflater.inflate(R.layout.custom_toast, parentLayout)
-                        layout.tvTextToast.text = "Неизвестная ошибка"
+                        layout.tvTextToast.text = "Ошибка $code"
                         layout.imageToast.setImageResource(R.drawable.ic_error)
 
                         duration = Toast.LENGTH_SHORT

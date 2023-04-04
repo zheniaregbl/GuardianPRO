@@ -7,10 +7,10 @@ import io.ktor.client.statement.*
 
 class Great {
     private val client = HttpClient()
-    private val urlAuthorization = "https://c06f-80-76-43-249.eu.ngrok.io/api/auth/"
-    private val urlGetApplic = "https://c06f-80-76-43-249.eu.ngrok.io/api/getapplication/"
-    private val urlSetAccess = "https://c06f-80-76-43-249.eu.ngrok.io/api/grant/"
-    private val urlSetTime = "https://c06f-80-76-43-249.eu.ngrok.io/api/settime/"
+    private val urlAuthorization = "https://2ahcf.localtonet.com/api/auth/"
+    private val urlGetApplic = "https://2ahcf.localtonet.com/api/getapplication/"
+    private val urlSetAccess = "https://2ahcf.localtonet.com/api/grant/"
+    private val urlSetTime = "https://2ahcf.localtonet.com/api/settime/"
 
     suspend fun great(code: String, password: String): Int{
         val response: HttpResponse = client.post(urlAuthorization) {

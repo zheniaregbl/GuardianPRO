@@ -97,7 +97,18 @@
             android:layout_marginStart="19dp"
             android:layout_marginTop="230dp"
             android:fontFamily="@font/inter"
-            android:text="Время: "
+            android:text="Время визита: "
+            android:textColor="@color/grey_font"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/tvInfo8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="19dp"
+            android:layout_marginTop="264dp"
+            android:fontFamily="@font/inter"
+            android:text="Время ухода: "
             android:textColor="@color/grey_font"
             android:textSize="22sp" />
 

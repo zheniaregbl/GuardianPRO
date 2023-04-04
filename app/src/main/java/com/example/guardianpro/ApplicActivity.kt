@@ -1,15 +1,23 @@
 package com.example.guardianpro
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Drawable
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.guardianpro.databinding.ActivityApplicBinding
+import com.example.guardianpro.databinding.ApplicActivityBinding
 import com.example.guardianpro.databinding.ApplicItemBinding
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_applic.*
+import kotlinx.android.synthetic.main.applic_activity.*
 import kotlinx.android.synthetic.main.custom_toast.*
 import kotlinx.android.synthetic.main.custom_toast.view.*
 import kotlinx.coroutines.runBlocking
@@ -18,22 +26,102 @@ import java.time.LocalDate
 import java.util.*
 
 class ApplicActivity : AppCompatActivity(), ApplicAdapter.Listener {
-    lateinit var binding: ActivityApplicBinding
+    lateinit var binding: ApplicActivityBinding
     private var adapter = ApplicAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityApplicBinding.inflate(layoutInflater)
+        binding = ApplicActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        initTabLayout()
+        initSearch()
         initApplic()
         initButtons()
     }
 
+    private fun initTabLayout() = with(binding){
+        tabLayout.addOnTabSelectedListener(object: OnTabSelectedListener{
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when (tab?.position){
+                    0 -> {
+                        val newAdapter = ApplicAdapter(this@ApplicActivity)
+
+                        val currentDate = getCurrentDateTime().toString("yyyy-MM-dd")
+
+                        val gson = Gson()
+
+                        val stringJson = runBlocking {
+                            Great().greater()
+                        }
+
+                        val listApplic = gson.fromJson(stringJson, ExampleJson2KtKotlin::class.java)
+
+                        for (i in listApplic.applications.indices){
+                            if(listApplic.applications[i].timeOut == null && LocalDate.parse(listApplic.applications[i].date) >= LocalDate.parse(currentDate)){
+                                newAdapter.addApplic(listApplic.applications[i])
+                            }
+                        }
+
+                        adapter = newAdapter
+                        rcView2.adapter = adapter
+                    }
+                    1 -> {
+                        val newAdapter = ApplicAdapter(this@ApplicActivity)
+
+                        val currentDate = getCurrentDateTime().toString("yyyy-MM-dd")
+
+                        val gson = Gson()
+
+                        val stringJson = runBlocking {
+                            Great().greater()
+                        }
+
+                        val listApplic = gson.fromJson(stringJson, ExampleJson2KtKotlin::class.java)
+
+                        for (i in listApplic.applications.indices){
+                            if(listApplic.applications[i].timeOut != null){
+                                newAdapter.addApplic(listApplic.applications[i])
+                            }
+                        }
+
+                        adapter = newAdapter
+                        rcView2.adapter = adapter
+                    }
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                return
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                return
+            }
+
+        })
+    }
+
+    private fun initSearch() = with(binding){
+        searchLine.setOnQueryTextListener(object: SearchView.OnQueryTextListener,
+            android.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.filter.filter(newText)
+                return false
+            }
+
+        })
+    }
+
     @SuppressLint("NewApi")
     private fun initApplic() = with(binding) {
-        rcView.layoutManager = LinearLayoutManager(this@ApplicActivity)
-        rcView.adapter = adapter
+        rcView2.layoutManager = LinearLayoutManager(this@ApplicActivity)
+        rcView2.adapter = adapter
 
         val currentDate = getCurrentDateTime().toString("yyyy-MM-dd")
 
@@ -55,14 +143,12 @@ class ApplicActivity : AppCompatActivity(), ApplicAdapter.Listener {
     @Suppress("DEPRECATION")
     @SuppressLint("NewApi")
     private  fun initButtons() = with(binding){
-        btFilterDate.setOnClickListener {
+        imBtFilterDate.setOnClickListener {
             val list = adapter.getList()
 
             list.sortBy { LocalDate.parse(it.date) }
 
             adapter.setSortList(list)
-
-            rcView.adapter = adapter
 
             Toast(this@ApplicActivity).apply {
                 val layout = layoutInflater.inflate(R.layout.custom_toast, parentLayout)
@@ -75,7 +161,7 @@ class ApplicActivity : AppCompatActivity(), ApplicAdapter.Listener {
             }.show()
         }
 
-        btFilterDivision.setOnClickListener {
+        imBtFilterDivision.setOnClickListener {
             val list = adapter.getList()
 
             list.sortBy { it.division }
@@ -103,16 +189,23 @@ class ApplicActivity : AppCompatActivity(), ApplicAdapter.Listener {
         return Calendar.getInstance().time
     }
 
-    override fun onClick(applic: Applic, binding: ApplicItemBinding) = with(binding) {
-        if(applic.access == false){
-            val dialog = InfoDialogFragment(applic, binding, this@ApplicActivity)
+    override fun onClick(applic: Applic, binding: ApplicItemBinding) = with(binding){
+        if (tabLayout.selectedTabPosition == 0){
+            if(applic.access == false){
+                val dialog = InfoDialogFragment(applic, binding, this@ApplicActivity, false)
 
-            dialog.show(supportFragmentManager, "InfoDialog")
+                dialog.show(supportFragmentManager, "InfoDialog")
+            }
+            else{
+                val dialog = TimeDialogFragment(this@ApplicActivity, adapter, applic)
+
+                dialog.show(supportFragmentManager, "TimeDialog")
+            }
         }
         else{
-            val dialog = TimeDialogFragment(this@ApplicActivity, adapter, applic)
+            val dialog = InfoDialogFragment(applic, binding, this@ApplicActivity, true)
 
-            dialog.show(supportFragmentManager, "TimeDialog")
+            dialog.show(supportFragmentManager, "InfoDialog")
         }
     }
 }
