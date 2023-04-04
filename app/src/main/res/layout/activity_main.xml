@@ -62,7 +62,8 @@
         android:textColorHint="@color/color_hint"
         app:layout_constraintEnd_toEndOf="@+id/tvText3"
         app:layout_constraintStart_toStartOf="@+id/tvText3"
-        app:layout_constraintTop_toBottomOf="@+id/tvText3" />
+        app:layout_constraintTop_toBottomOf="@+id/tvText3"
+        android:textCursorDrawable="@drawable/custom_cursor" />
 
     <EditText
         android:id="@+id/edPassword"
@@ -79,7 +80,8 @@
         android:textColorHint="@color/color_hint"
         app:layout_constraintEnd_toEndOf="@+id/edCode"
         app:layout_constraintStart_toStartOf="@+id/edCode"
-        app:layout_constraintTop_toBottomOf="@+id/edCode" />
+        app:layout_constraintTop_toBottomOf="@+id/edCode"
+        android:textCursorDrawable="@drawable/custom_cursor" />
 
     <ImageButton
         android:id="@+id/btEnter"
