@@ -201,8 +201,6 @@ class ApplicActivity : AppCompatActivity(), ApplicAdapter.Listener {
 
                 dialog.show(supportFragmentManager, "TimeDialog")
             }
-
-            Toast.makeText(this@ApplicActivity, "${applic.access}", Toast.LENGTH_SHORT).show()
         }
         else{
             val dialog = InfoDialogFragment(applic, binding, this@ApplicActivity, true)
